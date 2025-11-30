@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roseantic Gudino | Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --cursor-x: 50%;
+            --cursor-y: 50%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; /* Slate 950 */
+            color: #e2e8f0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #14b8a6; }
+
+        /* Spotlight Effect */
+        .spotlight {
+            background: radial-gradient(600px circle at var(--cursor-x) var(--cursor-y), rgba(45, 212, 191, 0.08), transparent 40%);
+        }
+
+        /* Sharper Heading Text Shadow */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
+        }
+        
+        .heading-gradient {
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Animations */
+        @keyframes float-slow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10px, -20px); }
+        }
+        @keyframes float-slower {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-20px, 30px); }
+        }
+        .animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
+        .animate-float-slower { animation: float-slower 12s ease-in-out infinite; }
+
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up { animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* 3D Tilt */
+        .perspective-1000 { perspective: 1000px; }
+        .preserve-3d { transform-style: preserve-3d; }
+        
+        /* Blinking Cursor */
+        .blink { animation: blink-animation 1s steps(2, start) infinite; }
+        @keyframes blink-animation { to { visibility: hidden; } }
+
+        /* Glass Utility - Increased Opacity for Sharper Text Contrast */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6); /* Darker, less transparent */
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 950: '#020617' },
+                        teal: { 400: '#2dd4bf', 500: '#14b8a6' }
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="selection:bg-teal-500 selection:text-white">
+
+    <!-- Ambient Background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <!-- Darker gradient for better text contrast -->
+        <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,_rgba(15,23,42,0.95),_#020617)]"></div>
+        <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-teal-500/05 rounded-full blur-[120px] animate-float-slow"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-purple-500/05 rounded-full blur-[120px] animate-float-slower"></div>
+        <div class="absolute inset-0 opacity-[0.02]" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 50px 50px;"></div>
+    </div>
+
+    <!-- Spotlight Overlay -->
+    <div id="spotlight" class="fixed inset-0 pointer-events-none z-0 spotlight transition-opacity duration-300"></div>
+
+    <!-- Floating Navigation -->
+    <nav id="navbar" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 w-[95%] md:w-fit">
+        <div class="px-6 py-3 rounded-full flex items-center justify-between gap-8 border border-white/10 backdrop-blur-xl shadow-2xl bg-[#0f172a]/80 transition-all duration-300" id="nav-container">
+            <div class="text-xl font-black tracking-tighter cursor-pointer text-white" onclick="scrollToSection('home')">
+                RG<span class="text-teal-400">.</span>
+            </div>
+            
+            <div class="hidden md:flex gap-6 text-sm font-semibold tracking-wide">
+                <a href="#about" class="text-slate-300 hover:text-white transition-colors relative group">
+                    About
+                    <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-teal-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#experience" class="text-slate-300 hover:text-white transition-colors relative group">
+                    Experience
+                    <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-teal-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#projects" class="text-slate-300 hover:text-white transition-colors relative group">
+                    Projects
+                    <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-teal-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#contact" class="text-slate-300 hover:text-white transition-colors relative group">
+                    Contact
+                    <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-teal-400 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </div>
+
+            <a href="https://www.linkedin.com/in/roseantic-gudino" target="_blank" rel="noreferrer" 
+               class="p-2 rounded-full bg-teal-500/10 hover:bg-teal-500 text-teal-400 hover:text-white transition-all border border-teal-500/20 hover:border-teal-500">
+                <i data-lucide="linkedin" width="18" height="18"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center relative pt-20 z-10">
+        <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-8 z-10 animate-fade-in-up">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 text-teal-300 text-xs font-bold border border-white/10 mb-2 uppercase tracking-widest backdrop-blur-md shadow-lg">
+                    <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
+                    Available for Opportunities
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight text-white drop-shadow-sm">
+                    Hello, I'm <br/>
+                    <span class="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-teal-200 via-teal-400 to-blue-500 text-glow">
+                        Roseantic
+                        <!-- Clean underline svg -->
+                        <svg class="absolute w-full h-3 -bottom-2 left-0 text-teal-500 opacity-80" viewBox="0 0 100 10" preserveAspectRatio="none">
+                            <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="6" fill="none" />
+                        </svg>
+                    </span>
+                </h1>
+                
+                <div class="h-12 md:h-16">
+                    <p class="text-slate-300 text-lg md:text-xl md:max-w-xl leading-relaxed font-normal border-l-4 border-teal-500 pl-6 py-1">
+                        <span id="typing-text" class="font-medium"></span><span class="blink text-teal-400 font-bold">|</span>
+                    </p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                    <button onclick="scrollToSection('projects')" 
+                            class="px-8 py-4 bg-teal-500 text-[#020617] font-bold rounded-xl hover:bg-teal-400 transition-all hover:-translate-y-1 shadow-[0_0_20px_rgba(20,184,166,0.4)]">
+                        Explore Work
+                    </button>
+                    <a href="https://github.com/Roseantic-Gudino" target="_blank" 
+                       class="px-8 py-4 bg-[#0f172a] border border-white/20 text-white font-semibold rounded-xl hover:bg-[#1e293b] hover:border-white/40 transition-all flex items-center justify-center gap-2 hover:-translate-y-1">
+                        <i data-lucide="github" width="20"></i> GitHub
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 3D Code Card -->
+            <div class="relative hidden md:flex items-center justify-center perspective-1000 z-10">
+                <div id="hero-card" class="relative w-full max-w-md transition-transform duration-100 ease-out preserve-3d cursor-default">
+                    <!-- Glow behind -->
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-gradient-to-tr from-teal-500/10 to-blue-500/10 blur-3xl -z-10 rounded-full"></div>
+                    
+                    <div class="bg-[#0f172a] border border-slate-700/50 rounded-2xl overflow-hidden shadow-2xl shadow-black/60">
+                        <div class="flex items-center px-4 py-3 bg-[#1e293b] border-b border-slate-700/50">
+                            <div class="flex gap-2 mr-4">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <div class="flex-1 text-center text-xs text-slate-400 font-mono font-bold">portfolio.py</div>
+                        </div>
+                        <div class="p-6 font-mono text-sm leading-loose">
+                            <div class="text-purple-400 font-bold">class <span class="text-yellow-300">Developer</span>:</div>
+                            <div class="pl-4 text-slate-300">
+                                <span class="text-blue-400 font-bold">def</span> <span class="text-yellow-300">__init__</span>(self):
+                            </div>
+                            <div class="pl-8 text-slate-300">
+                                self.name = <span class="text-green-400">"Roseantic Gudino"</span>
+                            </div>
+                            <div class="pl-8 text-slate-300">
+                                self.role = <span class="text-green-400">"Software Engineer"</span>
+                            </div>
+                            <div class="pl-8 text-slate-300">
+                                self.passion = <span class="text-green-400">["Coding", "Design"]</span>
+                            </div>
+                            <div class="pl-4 text-slate-300 mt-2">
+                                <span class="text-blue-400 font-bold">def</span> <span class="text-yellow-300">get_status</span>(self):
+                            </div>
+                            <div class="pl-8 text-slate-300">
+                                <span class="text-pink-400 font-bold">return</span> <span class="text-green-400">"Ready to Hire!"</span>
+                            </div>
+                            <div class="pl-4 mt-2 animate-pulse text-teal-400 font-bold">_</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce cursor-pointer opacity-70 hover:opacity-100 transition-opacity" onclick="scrollToSection('about')">
+            <i data-lucide="chevron-down" class="text-teal-400 w-8 h-8"></i>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="about" class="py-24 relative z-10">
+        <div class="container mx-auto px-6">
+            <div class="mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-4 flex items-center gap-3 text-white">
+                    <span class="w-1.5 h-10 bg-gradient-to-b from-teal-400 to-blue-500 rounded-full"></span>
+                    Tech Stack
+                </h2>
+                <p class="text-slate-300 max-w-2xl text-lg font-light leading-relaxed">
+                    My technical toolkit consists of modern languages, frameworks, and databases that allow me to build scalable and efficient software.
+                </p>
+            </div>
+
+            <!-- Skills Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6" id="skills-container">
+                <!-- Skills will be injected via JS -->
+            </div>
+
+            <!-- Enhanced Education & Bio Section -->
+            <div class="mt-24 grid md:grid-cols-12 gap-12">
+                <!-- Left: Bio -->
+                <div class="md:col-span-5 space-y-8">
+                    <div class="glass-panel p-8 rounded-3xl">
+                        <h3 class="text-2xl font-bold text-white mb-6 border-b border-white/10 pb-4">About Me</h3>
+                        <p class="text-slate-300 leading-relaxed mb-4 text-base">
+                            I am a First-year Master's student in Computer Science with a strong foundation in software engineering principles. 
+                            My journey involves hands-on experience with <strong class="text-teal-300">.NET</strong> frameworks and <strong class="text-teal-300">Python</strong> full-stack development.
+                        </p>
+                        <p class="text-slate-300 leading-relaxed text-base">
+                            Beyond coding, I've led events like EPOCH at TEDxCIT, earning accolades in debate and design along the way.
+                        </p>
+                    </div>
+                    
+                    <!-- Achievements Mini-Cards -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-5 rounded-2xl bg-[#0f172a] border border-yellow-500/20 shadow-lg hover:border-yellow-500/40 transition-colors">
+                            <i data-lucide="award" class="text-yellow-500 mb-3" width="28"></i>
+                            <div class="text-base font-bold text-white">Poster Design</div>
+                            <div class="text-xs text-slate-400 mt-1 font-medium">1st Place Winner</div>
+                        </div>
+                        <div class="p-5 rounded-2xl bg-[#0f172a] border border-purple-500/20 shadow-lg hover:border-purple-500/40 transition-colors">
+                            <i data-lucide="crown" class="text-purple-500 mb-3" width="28"></i>
+                            <div class="text-base font-bold text-white">TEDxCIT Director</div>
+                            <div class="text-xs text-slate-400 mt-1 font-medium">Event Leadership</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Education Timeline -->
+                <div class="md:col-span-7 bg-[#0f172a] p-8 rounded-3xl border border-slate-700/50 relative overflow-hidden shadow-2xl">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+                    <h3 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <i data-lucide="graduation-cap" class="text-teal-400"></i>
+                        Education Journey
+                    </h3>
+                    
+                    <div class="space-y-8 relative">
+                        <!-- Vertical Line -->
+                        <div class="absolute left-[19px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-teal-500/40 to-slate-700/20"></div>
+
+                        <!-- M.Tech -->
+                        <div class="relative pl-12 group">
+                            <div class="absolute left-0 top-1 w-10 h-10 rounded-full flex items-center justify-center border-4 border-[#0f172a] z-10 bg-teal-500 text-[#020617] shadow-[0_0_15px_rgba(20,184,166,0.5)]">
+                                <i data-lucide="calendar" width="18"></i>
+                            </div>
+                            <div class="bg-[#1e293b]/50 p-6 rounded-2xl border border-slate-700 hover:border-teal-500/40 transition-all hover:-translate-y-1 shadow-md">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="text-lg font-bold text-white group-hover:text-teal-300 transition-colors">M.Tech in Computer Science</h4>
+                                    <span class="text-xs px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-300 font-semibold tracking-wide">Current</span>
+                                </div>
+                                <p class="text-slate-300 font-medium">Dayananda Sagar University</p>
+                                <div class="flex items-center gap-4 mt-4 text-sm text-slate-400 font-mono">
+                                    <span class="font-bold text-slate-200">2025 - 2027</span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                    <span class="text-teal-400 font-medium">Pursuing</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- B.E. -->
+                        <div class="relative pl-12 group">
+                            <div class="absolute left-0 top-1 w-10 h-10 rounded-full flex items-center justify-center border-4 border-[#0f172a] z-10 bg-slate-700 text-slate-300">
+                                <div class="w-2.5 h-2.5 rounded-full bg-slate-300"></div>
+                            </div>
+                            <div class="bg-[#1e293b]/50 p-6 rounded-2xl border border-slate-700 hover:border-teal-500/40 transition-all hover:-translate-y-1 shadow-md">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="text-lg font-bold text-white group-hover:text-teal-300 transition-colors">B.E. in Computer Science</h4>
+                                    <span class="text-xs px-3 py-1 rounded-full bg-slate-800 border border-slate-600 text-slate-400 font-semibold tracking-wide">Completed</span>
+                                </div>
+                                <p class="text-slate-300 font-medium">Cambridge Institute of Technology</p>
+                                <div class="flex items-center gap-4 mt-4 text-sm text-slate-400 font-mono">
+                                    <span class="font-bold text-slate-200">2021 - 2025</span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                    <span class="text-teal-400 font-medium">CGPA: 9.04</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-24 relative z-10">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-extrabold mb-12 flex items-center gap-3 text-white">
+                <span class="w-1.5 h-10 bg-gradient-to-b from-teal-400 to-blue-500 rounded-full"></span>
+                Featured Projects
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-8" id="projects-container">
+                <!-- Projects injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Timeline -->
+    <section id="experience" class="py-24 bg-[#0a0f1c] relative z-10 border-t border-slate-800/50">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-extrabold mb-12 flex items-center gap-3 text-white">
+                <span class="w-1.5 h-10 bg-gradient-to-b from-teal-400 to-blue-500 rounded-full"></span>
+                Professional Journey
+            </h2>
+            
+            <div class="space-y-8" id="experience-container">
+                <!-- Experience injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 relative overflow-hidden z-10">
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h2 class="text-5xl font-extrabold mb-6 text-white tracking-tight">Let's Build Something.</h2>
+            <p class="text-slate-300 text-xl mb-12 max-w-xl mx-auto font-light leading-relaxed">
+                I'm currently open for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <a href="mailto:roseanticgudino27@gmail.com" class="group flex items-center justify-center gap-3 px-8 py-4 bg-teal-500 hover:bg-teal-400 text-[#020617] font-bold rounded-xl transition-all hover:scale-105 shadow-[0_0_30px_rgba(20,184,166,0.3)]">
+                    <i data-lucide="mail" class="group-hover:text-white transition-colors" width="20"></i>
+                    Send Email
+                </a>
+                <a href="https://www.linkedin.com/in/roseantic-gudino" target="_blank" class="flex items-center justify-center gap-3 px-8 py-4 bg-[#0f172a] text-white font-bold rounded-xl border border-slate-600 transition-all hover:bg-slate-800 hover:border-slate-400">
+                    <i data-lucide="linkedin" width="20"></i>
+                    LinkedIn
+                </a>
+            </div>
+
+            <div class="mt-20 pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-slate-400 text-sm">
+                <div class="flex items-center gap-2 mb-4 md:mb-0 font-medium">
+                    <i data-lucide="map-pin" width="16"></i> Bangalore, Karnataka
+                </div>
+                <p class="font-medium">&copy; 2025 Roseantic Gudino.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA & CONTENT ---
+        const svgs = {
+            python: `<svg viewBox="0 0 128 128" width="24" height="24"><path d="M64.9 22.1c-9.1 0-16.7 3.5-20.5 9.1l-.3.4v18.1h28v4.5H35.4v-3.3c0-11 9-20 20-20h18.9c6 0 10.9 4.9 10.9 10.9 0 .6 0 1.2-.1 1.7l-4.5 24.8H53l3.6-19.8c.4-2.2 2.3-3.8 4.6-3.8h17.9V22.1H64.9zM62.5 106.6c9.1 0 16.7-3.5 20.5-9.1l.3-.4V79h-28v-4.5h36.7v3.3c0 11-9 20-20 20H53.1c-6 0-10.9-4.9-10.9-10.9 0-.6 0-1.2.1-1.7l4.5-24.8h27.6l-3.6 19.8c-.4 2.2-2.3 3.8-4.6 3.8H48.3v22.6h14.2z" fill="currentColor"/><circle cx="43.5" cy="33.8" r="4.8" fill="currentColor"/><circle cx="84.2" cy="94.4" r="4.8" fill="currentColor"/></svg>`,
+            csharp: `<svg viewBox="0 0 128 128" width="24" height="24"><path d="M64 16c-26.5 0-48 21.5-48 48s21.5 48 48 48 48-21.5 48-48-21.5-48-48-48zm22.4 38.4h-9.6v9.6h-9.6v-9.6h-9.6v-9.6h9.6v-9.6h9.6v9.6h9.6v9.6zM54.4 83.2H41.6V44.8h12.8v38.4z" fill="currentColor"/></svg>`,
+            dotnet: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><path d="M3 12h18M12 3v18M17 7l-5 5-5-5M17 17l-5-5-5 5"/></svg>`,
+            js: `<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 3h18v18H3V3zm12.5 12.5h1.5v-5h-1.5v5zm-5 0h1.5v-3.5c0-.5.5-.5.5-.5v-1c-1 0-2 1-2 2v3z" fill="currentColor"/></svg>`,
+            html: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M4 3l1.5 15L12 21l6.5-3L20 3H4z"/><path d="M12 17l-4-1.5-.5-4h9" stroke-opacity="0.5"/></svg>`,
+            css: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M4 3l1.5 15L12 21l6.5-3L20 3H4z"/><path d="M12 7h5m-5 4h5m-5 4h4" stroke-opacity="0.5"/></svg>`,
+            angular: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M12 2L2 6l1.5 11L12 22l8.5-5L22 6 12 2z"/><path d="M12 5l-4 9h8l-4-9z" fill="currentColor" fill-opacity="0.2"/></svg>`,
+            sql: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg>`,
+            react: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" width="24" height="24"><circle cx="12" cy="12" r="2"/><path d="M12 2.5c5 0 9.5 4 9.5 9.5s-4.5 9.5-9.5 9.5S2.5 17.5 2.5 12 7 2.5 12 2.5z" transform="rotate(45 12 12)" opacity="0.5"/><path d="M12 2.5c5 0 9.5 4 9.5 9.5s-4.5 9.5-9.5 9.5S2.5 17.5 2.5 12 7 2.5 12 2.5z" transform="rotate(-45 12 12)" opacity="0.5"/><path d="M12 2.5c5 0 9.5 4 9.5 9.5s-4.5 9.5-9.5 9.5S2.5 17.5 2.5 12 7 2.5 12 2.5z" opacity="0.5"/></svg>`,
+            git: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><circle cx="12" cy="12" r="2"/><path d="M12 14v4M12 10V6"/><circle cx="12" cy="18" r="1"/><circle cx="12" cy="6" r="1"/></svg>`,
+            code: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-terminal"><polyline points="4 17 10 11"/><line x1="12" x2="20" y1="19" y2="19"/></svg>`,
+            db: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-database"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>`
+        };
+
+        const skillsData = [
+            { cat: "Languages", icon: "code", items: [{n:"Python", c:"text-yellow-400", i: svgs.python}, {n:"C / C++", c:"text-blue-400", i: svgs.code}, {n:"C#", c:"text-purple-400", i: svgs.csharp}, {n:"JavaScript", c:"text-yellow-300", i: svgs.js}, {n:"SQL", c:"text-cyan-400", i: svgs.sql}] },
+            { cat: "Frontend", icon: "globe", items: [{n:"HTML5", c:"text-orange-500", i: svgs.html}, {n:"CSS3", c:"text-blue-500", i: svgs.css}, {n:"Angular", c:"text-red-500", i: svgs.angular}, {n:"Bootstrap", c:"text-purple-500", i: svgs.code}, {n:"React", c:"text-cyan-300", i: svgs.react}] },
+            { cat: "Backend & DB", icon: "server", items: [{n:".NET Core", c:"text-purple-400", i: svgs.dotnet}, {n:"Django", c:"text-green-500", i: svgs.python}, {n:"MySQL", c:"text-blue-400", i: svgs.sql}, {n:"SQL Server", c:"text-red-400", i: svgs.db}] },
+            { cat: "Tools", icon: "cpu", items: [{n:"Git", c:"text-orange-400", i: svgs.git}, {n:"VS Code", c:"text-blue-400", i: svgs.code}, {n:"Shell", c:"text-green-400", i: svgs.code}] }
+        ];
+
+        const projectsData = [
+            { title: "E-Commerce Web App", icon: "briefcase", desc: "A full-fledged shopping platform handling business logic with .NET and managing product data via SQL Server.", tags: ["Full Stack", "Business Logic"], tech: [svgs.dotnet, svgs.sql, svgs.css] },
+            { title: "Blood Donation DBMS", icon: "database", desc: "A database management system tracking donors, donations, and recipients with complex SQL queries and Python integration.", tags: ["Database", "Healthcare"], tech: [svgs.python, svgs.sql] },
+            { title: "Sign Language Translator", icon: "terminal", desc: "Terminal program converting sign language gestures into text and speech using Image Processing to facilitate communication.", tags: ["AI/ML", "Accessibility"], tech: [svgs.python, svgs.code] },
+            { title: "Sentiment Analysis", icon: "globe", desc: "Web app classifying social media posts as positive, negative, or neutral using logistic regression models.", tags: ["Machine Learning", "NLP"], tech: [svgs.python, svgs.code] }
+        ];
+
+        const experienceData = [
+            { period: "Apr 2025 - Jun 2025", role: "Programmer Analyst Trainee", company: "Cognizant Technology Solutions", desc: "Contributed to e-commerce web app features using C# and .NET. Optimized SQL workflows and built responsive UI with Bootstrap.", stack: ["C#", ".NET", "SQL Server", "Bootstrap"] },
+            { period: "Oct 2022 - Nov 2022", role: "Full-Stack Intern", company: "Indian Tech Keys", desc: "Developed full-stack web applications using Python. Managed databases and integrated APIs for responsive interfaces.", stack: ["Python", "HTML/CSS", "MySQL"] }
+        ];
+
+        // --- RENDER FUNCTIONS ---
+        
+        function renderSkills() {
+            const container = document.getElementById('skills-container');
+            skillsData.forEach(group => {
+                const card = document.createElement('div');
+                card.className = "bg-[#0f172a] border border-slate-700/50 rounded-2xl p-6 hover:border-teal-500/40 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-teal-900/20 group";
+                
+                let skillsHtml = '';
+                group.items.forEach(item => {
+                    skillsHtml += `
+                        <div class="flex items-center gap-3 group/skill">
+                            <div class="w-8 h-8 flex items-center justify-center transition-transform group-hover/skill:scale-110 ${item.c}">${item.i}</div>
+                            <span class="text-slate-300 font-medium text-sm group-hover/skill:text-white transition-colors">${item.n}</span>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2.5 rounded-lg bg-teal-500/10 text-teal-400 group-hover:text-teal-300 transition-colors"><i data-lucide="${group.icon}" width="24"></i></div>
+                        <h3 class="font-bold text-lg text-white">${group.cat}</h3>
+                    </div>
+                    <div class="space-y-4">${skillsHtml}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projects-container');
+            projectsData.forEach(project => {
+                const card = document.createElement('div');
+                card.className = "group relative bg-[#0f172a] rounded-3xl overflow-hidden border border-slate-700/50 transition-all duration-500 hover:shadow-[0_0_40px_rgba(20,184,166,0.15)] hover:-translate-y-2 hover:border-teal-500/30";
+                
+                let tagsHtml = project.tags.map(t => `<span class="px-3 py-1 text-xs font-semibold text-slate-300 bg-slate-800 rounded-full border border-slate-600">${t}</span>`).join('');
+                let techHtml = project.tech.map(t => `<div class="w-10 h-10 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-slate-300 relative z-0 hover:z-10 hover:border-teal-500 transition-all hover:scale-110 shadow-sm">${t}</div>`).join('');
+
+                card.innerHTML = `
+                    <div class="p-8 h-full flex flex-col relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="p-3 bg-slate-800/80 backdrop-blur-md rounded-2xl text-teal-400 border border-slate-600 group-hover:scale-110 group-hover:bg-teal-500 group-hover:text-[#020617] transition-all duration-300 shadow-md">
+                                <i data-lucide="${project.icon}" width="24"></i>
+                            </div>
+                            <div class="flex gap-2">${tagsHtml}</div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-teal-300 transition-colors">${project.title}</h3>
+                        <p class="text-slate-400 mb-8 leading-relaxed flex-grow text-base">${project.desc}</p>
+                        <div class="flex items-center justify-between pt-6 border-t border-slate-700/50 mt-auto">
+                            <div class="flex -space-x-3 hover:space-x-1 transition-all">${techHtml}</div>
+                            <a href="https://github.com/Roseantic-Gudino" target="_blank" class="flex items-center gap-2 text-sm font-bold text-slate-300 hover:text-teal-400 transition-colors">
+                                View Code <i data-lucide="external-link" width="16"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Refined hover glow -->
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-teal-500/10 to-blue-500/10 rounded-full blur-[60px] -mr-32 -mt-32 transition-opacity opacity-0 group-hover:opacity-100 pointer-events-none"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderExperience() {
+            const container = document.getElementById('experience-container');
+            experienceData.forEach(job => {
+                const item = document.createElement('div');
+                item.className = "relative pl-8 md:pl-0";
+                let stackHtml = job.stack.map(st => `<span class="text-xs px-2.5 py-1 bg-slate-800 rounded-md text-slate-300 font-mono border border-slate-600 font-medium">${st}</span>`).join('');
+                
+                item.innerHTML = `
+                    <div class="absolute left-0 top-0 bottom-0 w-px bg-slate-800 md:hidden"></div>
+                    <div class="absolute left-[-4px] top-6 w-2 h-2 rounded-full bg-teal-500 md:hidden"></div>
+                    <div class="md:grid md:grid-cols-5 gap-8 items-start group">
+                        <div class="md:col-span-1 md:text-right pt-2 text-sm font-mono text-slate-400 font-medium tracking-tight">${job.period}</div>
+                        <div class="hidden md:flex flex-col items-center h-full relative">
+                            <div class="w-3.5 h-3.5 rounded-full bg-teal-500 z-10 group-hover:scale-125 transition-transform shadow-[0_0_10px_rgba(20,184,166,0.6)] border-2 border-[#0a0f1c]"></div>
+                            <div class="w-px h-full bg-slate-800 absolute top-3 -bottom-8 group-hover:bg-slate-700 transition-colors"></div>
+                        </div>
+                        <div class="md:col-span-3 bg-[#0f172a] border border-slate-700/50 p-7 rounded-2xl hover:border-teal-500/30 transition-all hover:shadow-xl hover:shadow-black/20 hover:-translate-x-1">
+                            <h3 class="text-xl font-bold text-white mb-1">${job.role}</h3>
+                            <div class="text-teal-400 font-semibold mb-4 text-sm tracking-wide uppercase">${job.company}</div>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-5">${job.desc}</p>
+                            <div class="flex flex-wrap gap-2">${stackHtml}</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // --- ANIMATION & INTERACTIVITY ---
+        
+        function typeText() {
+            const text = "Building robust systems with a touch of creativity.";
+            const element = document.getElementById('typing-text');
+            let index = 0;
+            const interval = setInterval(() => {
+                element.textContent = text.slice(0, index);
+                index++;
+                if (index > text.length) clearInterval(interval);
+            }, 50);
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Mouse Move Effect (Spotlight & 3D Tilt)
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // Spotlight
+            document.documentElement.style.setProperty('--cursor-x', x + 'px');
+            document.documentElement.style.setProperty('--cursor-y', y + 'px');
+
+            // 3D Hero Card Tilt
+            const card = document.getElementById('hero-card');
+            if (card) {
+                const rect = card.getBoundingClientRect();
+                const cardX = rect.left + rect.width / 2;
+                const cardY = rect.top + rect.height / 2;
+                const angleX = (y - cardY) / 25; // Less sensitive
+                const angleY = (cardX - x) / 25;
+
+                card.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg)`;
+            }
+        });
+
+        // Scroll Effect for Navbar
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav-container');
+            if (window.scrollY > 50) {
+                nav.classList.replace('bg-[#0f172a]/80', 'bg-[#0f172a]/95');
+                nav.classList.add('shadow-teal-500/5');
+            } else {
+                nav.classList.replace('bg-[#0f172a]/95', 'bg-[#0f172a]/80');
+                nav.classList.remove('shadow-teal-500/5');
+            }
+        });
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderSkills();
+            renderProjects();
+            renderExperience();
+            typeText();
+            lucide.createIcons(); // Call again for dynamic content
+        });
+
+    </script>
+</body>
+</html>
